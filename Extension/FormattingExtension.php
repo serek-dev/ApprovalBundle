@@ -15,25 +15,16 @@ use Twig\TwigFilter;
 
 class FormattingExtension extends AbstractExtension
 {
-    /**
-     * @var FormattingTool
-     */
-    private $formattingTool;
-
-    /**
-     * @param FormattingTool $formattingTool
-     */
-    public function __construct(FormattingTool $formattingTool)
+    public function __construct(private readonly FormattingTool $formattingTool)
     {
-        $this->formattingTool = $formattingTool;
     }
 
     public function getFilters(): array
     {
         return [
-            new TwigFilter('formatHours', [$this, 'formatHours']),
-            new TwigFilter('formatDate', [$this, 'formatDate']),
-            new TwigFilter('formatMonth', [$this, 'formatMonth']),
+            new TwigFilter('formatHours', $this->formatHours(...)),
+            new TwigFilter('formatDate', $this->formatDate(...)),
+            new TwigFilter('formatMonth', $this->formatMonth(...)),
         ];
     }
 

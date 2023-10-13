@@ -12,7 +12,6 @@ namespace KimaiPlugin\ApprovalBundle\Repository;
 use App\Entity\Timesheet;
 use App\Entity\User;
 use App\Model\DailyStatistic;
-use App\Form\Type\DurationType;
 use App\Repository\ActivityRepository;
 use App\Repository\ProjectRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -26,23 +25,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ReportRepository extends ServiceEntityRepository
 {
-    /**
-     * @var ProjectRepository
-     */
-    private $projectRepository;
-    /**
-     * @var ActivityRepository
-     */
-    private $activityRepository;
-
     public function __construct(
         ManagerRegistry $registry,
-        ProjectRepository $projectRepository,
-        ActivityRepository $activityRepository
+        private readonly ProjectRepository $projectRepository,
+        private readonly ActivityRepository $activityRepository
     ) {
         parent::__construct($registry, Timesheet::class);
-        $this->projectRepository = $projectRepository;
-        $this->activityRepository = $activityRepository;
     }
 
     public function getDailyStatistic(User $user, \DateTime $begin, \DateTime $end): array
@@ -101,7 +89,7 @@ class ReportRepository extends ServiceEntityRepository
         return $this->getActualWorkingDuration($begin, $end, $user);
     }
 
-    private function getActualWorkingDuration(\DateTime $begin, \DateTime $end, User $user) : ?int
+    private function getActualWorkingDuration(\DateTime $begin, \DateTime $end, User $user): ?int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -117,7 +105,7 @@ class ReportRepository extends ServiceEntityRepository
 
         $result = $qb->getQuery()->getOneOrNullResult();
 
-        return intval($result["duration"]);
+        return \intval($result['duration']);
     }
 
     private function generateDailyStatistics(\DateTime $begin, \DateTime $end, User $user, $value, array $array): array

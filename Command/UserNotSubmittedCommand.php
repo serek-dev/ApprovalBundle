@@ -20,28 +20,13 @@ class UserNotSubmittedCommand extends Command
 {
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'kimai:bundle:approval:user-not-submitted-weeks';
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var EmailTool
-     */
-    private $emailTool;
 
     public function __construct(
-        UserRepository $userRepository,
-        EmailTool $emailTool,
-        ApprovalRepository $approvalRepository
+        private readonly UserRepository $userRepository,
+        private readonly EmailTool $emailTool,
+        private readonly ApprovalRepository $approvalRepository
     ) {
         parent::__construct();
-        $this->userRepository = $userRepository;
-        $this->emailTool = $emailTool;
-        $this->approvalRepository = $approvalRepository;
     }
 
     protected function configure(): void
@@ -53,9 +38,7 @@ class UserNotSubmittedCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $users = $this->userRepository->findAll();
-        $users = array_filter($users, function ($user) {
-            return $user->isEnabled() && !$user->isSuperAdmin();
-        });
+        $users = array_filter($users, fn ($user) => $user->isEnabled() && !$user->isSuperAdmin());
 
         foreach ($users as $user) {
             $approvals = $this->approvalRepository->getAllNotSubmittedApprovals([$user]);

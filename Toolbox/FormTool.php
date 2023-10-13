@@ -16,27 +16,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FormTool
 {
-    /**
-     * @var SettingsTool
-     */
-    private $settingsTool;
-
-    /**
-     * @var ApprovalSettingsInterface
-     */
-    private $metaFieldRuleRepository;
-
-    public function __construct(SettingsTool $settingsTool, ApprovalSettingsInterface $metaFieldRuleRepository)
+    public function __construct(private readonly SettingsTool $settingsTool, private readonly ApprovalSettingsInterface $metaFieldRuleRepository)
     {
-        $this->settingsTool = $settingsTool;
-        $this->metaFieldRuleRepository = $metaFieldRuleRepository;
     }
 
     /**
      * @param $key
      * @param $label
      * @param $child
-     * @param FormBuilderInterface $builder
      */
     public function createMetaDataChoice($child, $label, $key, FormBuilderInterface $builder)
     {
@@ -63,7 +50,6 @@ class FormTool
 
     /**
      * @param $prefix
-     * @param EntityRepository $repository
      * @param string $columnName
      * @return array
      */

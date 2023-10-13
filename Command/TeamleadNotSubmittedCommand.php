@@ -22,28 +22,12 @@ class TeamleadNotSubmittedCommand extends Command
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'kimai:bundle:approval:teamlead-not-submitted-last-week';
 
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var EmailTool
-     */
-    private $emailTool;
-    /**
-     * @var TeamRepository
-     */
-    private $teamRepository;
-
     public function __construct(
-        ApprovalRepository $approvalRepository,
-        EmailTool $emailTool,
-        TeamRepository $teamRepository
+        private readonly ApprovalRepository $approvalRepository,
+        private readonly EmailTool $emailTool,
+        private readonly TeamRepository $teamRepository
     ) {
         parent::__construct();
-        $this->approvalRepository = $approvalRepository;
-        $this->emailTool = $emailTool;
-        $this->teamRepository = $teamRepository;
     }
 
     protected function configure(): void
@@ -71,9 +55,7 @@ class TeamleadNotSubmittedCommand extends Command
     {
         return array_filter(
             $team->getUsers(),
-            function ($user) {
-                return $user->isEnabled() && !$user->isSuperAdmin();
-            }
+            fn ($user) => $user->isEnabled() && !$user->isSuperAdmin()
         );
     }
 
@@ -81,9 +63,7 @@ class TeamleadNotSubmittedCommand extends Command
     {
         return array_filter(
             $team->getTeamleads(),
-            function ($user) {
-                return $user->isEnabled() && !$user->isSuperAdmin();
-            }
+            fn ($user) => $user->isEnabled() && !$user->isSuperAdmin()
         );
     }
 }

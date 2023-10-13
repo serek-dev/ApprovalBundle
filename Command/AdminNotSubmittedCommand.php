@@ -22,28 +22,12 @@ class AdminNotSubmittedCommand extends Command
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'kimai:bundle:approval:admin-not-submitted-users';
 
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var EmailTool
-     */
-    private $emailTool;
-
     public function __construct(
-        ApprovalRepository $approvalRepository,
-        UserRepository $userRepository,
-        EmailTool $emailTool
+        private readonly ApprovalRepository $approvalRepository,
+        private readonly UserRepository $userRepository,
+        private readonly EmailTool $emailTool
     ) {
         parent::__construct();
-        $this->approvalRepository = $approvalRepository;
-        $this->userRepository = $userRepository;
-        $this->emailTool = $emailTool;
     }
 
     protected function configure(): void
@@ -75,9 +59,7 @@ class AdminNotSubmittedCommand extends Command
     {
         return array_filter(
             $this->userRepository->findAll(),
-            function ($user) {
-                return !$user->isSuperAdmin() && $user->isEnabled();
-            }
+            fn ($user) => !$user->isSuperAdmin() && $user->isEnabled()
         );
     }
 }

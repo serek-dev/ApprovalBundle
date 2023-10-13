@@ -12,31 +12,23 @@ namespace KimaiPlugin\ApprovalBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalStatusRepository;
 
-/**
- * @ORM\Entity(repositoryClass=ApprovalStatusRepository::class)
- * @ORM\Table(name="kimai2_ext_approval_status")
- */
+#[ORM\Table(name: 'kimai2_ext_approval_status')]
+#[ORM\Entity(repositoryClass: ApprovalStatusRepository::class)]
 class ApprovalStatus
 {
-    public const SUBMITTED = 'submitted';
-    public const GRANTED = 'granted'; //WRONG - only for migration
-    public const DENIED = 'denied';
-    public const APPROVED = 'approved';
-    public const NOT_SUBMITTED = 'not_submitted';
+    final public const SUBMITTED = 'submitted';
+    final public const GRANTED = 'granted'; //WRONG - only for migration
+    final public const DENIED = 'denied';
+    final public const APPROVED = 'approved';
+    final public const NOT_SUBMITTED = 'not_submitted';
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $name;
-    /**
-     * @ORM\OneToMany(targetEntity="KimaiPlugin\ApprovalBundle\Entity\ApprovalHistory", mappedBy="status")
-     */
+    #[ORM\OneToMany(targetEntity: \KimaiPlugin\ApprovalBundle\Entity\ApprovalHistory::class, mappedBy: 'status')]
     private $history;
 
     /**
@@ -47,10 +39,7 @@ class ApprovalStatus
         return $this->id;
     }
 
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
+    public function setId(mixed $id): void
     {
         $this->id = $id;
     }
@@ -63,10 +52,7 @@ class ApprovalStatus
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
-    public function setName($name): void
+    public function setName(mixed $name): void
     {
         $this->name = $name;
     }
@@ -79,10 +65,7 @@ class ApprovalStatus
         return $this->history;
     }
 
-    /**
-     * @param mixed $history
-     */
-    public function setHistory($history): void
+    public function setHistory(mixed $history): void
     {
         $this->history = $history;
     }

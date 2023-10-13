@@ -23,33 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmailTool
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
-     * @var KimaiMailer
-     */
-    private $kimaiMailer;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var Formatting
-     */
-    private $formatting;
-
-    public function __construct(
-        TranslatorInterface $translator,
-        KimaiMailer $kimaiMailer,
-        UserRepository $userRepository,
-        Formatting $formatting
-    ) {
-        $this->kimaiMailer = $kimaiMailer;
-        $this->translator = $translator;
-        $this->userRepository = $userRepository;
-        $this->formatting = $formatting;
+    public function __construct(private readonly TranslatorInterface $translator, private readonly KimaiMailer $kimaiMailer, private readonly UserRepository $userRepository, private readonly Formatting $formatting)
+    {
     }
 
     public function sendStatusChangedEmail(Approval $approval, string $approver, string $url): bool
@@ -75,7 +50,7 @@ class EmailTool
             $this->kimaiMailer->send($email);
 
             return true;
-        } catch (TransportExceptionInterface $e) {
+        } catch (TransportExceptionInterface) {
             return false;
         }
     }
@@ -103,7 +78,7 @@ class EmailTool
 
             try {
                 $this->kimaiMailer->send($email);
-            } catch (TransportExceptionInterface $e) {
+            } catch (TransportExceptionInterface) {
                 return false;
             }
         }
@@ -124,7 +99,7 @@ class EmailTool
 
             try {
                 $this->kimaiMailer->send($email);
-            } catch (TransportExceptionInterface $e) {
+            } catch (TransportExceptionInterface) {
                 return false;
             }
         }
@@ -166,11 +141,6 @@ class EmailTool
     }
 
     /**
-     * @param array $recipients
-     * @param string $str
-     * @param string $template
-     * @param array $approvals
-     * @param OutputInterface $output
      * @return bool
      */
     protected function setApprovalsEmailToAllRecipient(array $recipients, string $str, string $template, array $approvals, OutputInterface $output): bool
@@ -185,7 +155,7 @@ class EmailTool
             try {
                 $this->kimaiMailer->send($email);
                 $output->writeln('<info>' . $recipient->getEmail() . '</info>');
-            } catch (TransportExceptionInterface $e) {
+            } catch (TransportExceptionInterface) {
                 return false;
             }
         }

@@ -13,43 +13,35 @@ use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalHistoryRepository;
 
-/**
- * @ORM\Entity(repositoryClass=ApprovalHistoryRepository::class)
- * @ORM\Table(name="kimai2_ext_approval_history")
- */
+#[ORM\Table(name: 'kimai2_ext_approval_history')]
+#[ORM\Entity(repositoryClass: ApprovalHistoryRepository::class)]
 class ApprovalHistory
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
     /**
      * @var Approval
-     * @ORM\ManyToOne(targetEntity="KimaiPlugin\ApprovalBundle\Entity\Approval", inversedBy="history")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: \KimaiPlugin\ApprovalBundle\Entity\Approval::class, inversedBy: 'history')]
+    #[ORM\JoinColumn(nullable: false)]
     private $approval;
     /**
      * @var User
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE', nullable: false)]
     private $user;
     /**
      * @var ApprovalStatus
-     * @ORM\ManyToOne(targetEntity="KimaiPlugin\ApprovalBundle\Entity\ApprovalStatus", inversedBy="history")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: \KimaiPlugin\ApprovalBundle\Entity\ApprovalStatus::class, inversedBy: 'history')]
+    #[ORM\JoinColumn(nullable: false)]
     private $status;
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $date;
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $message;
 
     /**
@@ -60,10 +52,7 @@ class ApprovalHistory
         return $this->id;
     }
 
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
+    public function setId(mixed $id): void
     {
         $this->id = $id;
     }
@@ -124,10 +113,7 @@ class ApprovalHistory
         return $this->date;
     }
 
-    /**
-     * @param mixed $date
-     */
-    public function setDate($date): void
+    public function setDate(mixed $date): void
     {
         $this->date = $date;
     }
@@ -140,10 +126,7 @@ class ApprovalHistory
         return $this->message;
     }
 
-    /**
-     * @param mixed $message
-     */
-    public function setMessage($message): void
+    public function setMessage(mixed $message): void
     {
         $this->message = $message;
     }

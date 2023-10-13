@@ -20,12 +20,10 @@ use KimaiPlugin\MetaFieldsBundle\Repository\MetaFieldRuleRepository;
 class MetaFieldSettings implements ApprovalSettingsInterface
 {
     private $metaFieldRuleRepository;
-    private $settingsTool;
 
-    public function __construct(MetaFieldRuleRepository $metaFieldRuleRepository, SettingsTool $settingsTool)
+    public function __construct(MetaFieldRuleRepository $metaFieldRuleRepository, private readonly SettingsTool $settingsTool)
     {
         $this->metaFieldRuleRepository = $metaFieldRuleRepository;
-        $this->settingsTool = $settingsTool;
     }
 
     public function canBeConfigured(): bool

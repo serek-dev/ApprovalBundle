@@ -15,18 +15,10 @@ use KimaiPlugin\ApprovalBundle\Enumeration\ConfigEnum;
 
 class SettingsTool
 {
-    /**
-     * @var ConfigurationRepository
-     */
-    private $configurationRepository;
-    private $cache = [];
+    private array $cache = [];
 
-    /**
-     * @param ConfigurationRepository $configurationRepository
-     */
-    public function __construct(ConfigurationRepository $configurationRepository)
+    public function __construct(private readonly ConfigurationRepository $configurationRepository)
     {
-        $this->configurationRepository = $configurationRepository;
     }
 
     /**
@@ -35,7 +27,7 @@ class SettingsTool
      */
     public function isInConfiguration($key)
     {
-        if ($this->configurationRepository->findOneBy(['name' => $key]) == null){
+        if ($this->configurationRepository->findOneBy(['name' => $key]) == null) {
             return false;
         } else {
             return true;
@@ -48,7 +40,7 @@ class SettingsTool
      */
     public function getConfiguration($key)
     {
-        if (!array_key_exists($key, $this->cache)) {
+        if (!\array_key_exists($key, $this->cache)) {
             $config = $this->configurationRepository->findOneBy(['name' => $key]);
             if ($config === null) {
                 return '';
@@ -58,8 +50,6 @@ class SettingsTool
 
         return $this->cache[$key];
     }
-
-
 
     /**
      * @param $key

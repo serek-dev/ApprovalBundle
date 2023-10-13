@@ -15,32 +15,20 @@ use App\Entity\User;
 use App\Reporting\WeekByUser;
 use App\Repository\UserRepository;
 use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use KimaiPlugin\ApprovalBundle\Enumeration\ConfigEnum;
 use KimaiPlugin\ApprovalBundle\Form\OvertimeByUserForm;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
 use KimaiPlugin\ApprovalBundle\Toolbox\SettingsTool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route(path="/overtime")
- */
+#[Route(path: '/overtime')]
 class OvertimeReportController extends AbstractController
 {
-    private $settingsTool;
-    private $approvalRepository;
-    private $userRepository;
-
-    public function __construct(
-        SettingsTool $settingsTool,
-        UserRepository $userRepository,
-        ApprovalRepository $approvalRepository
-    ) {
-        $this->settingsTool = $settingsTool;
-        $this->userRepository = $userRepository;
-        $this->approvalRepository = $approvalRepository;
+    public function __construct(private readonly SettingsTool $settingsTool, private readonly UserRepository $userRepository, private readonly ApprovalRepository $approvalRepository)
+    {
     }
 
     private function canManageTeam(): bool
@@ -53,15 +41,15 @@ class OvertimeReportController extends AbstractController
         return $this->isGranted('view_all_approval');
     }
 
-    /** 
-     * @Route(path="/overtime_by_user", name="overtime_bundle_report", methods={"GET","POST"})
+    /**
      * @Security("is_granted('view_team_approval') or is_granted('view_all_approval') ")
      * @throws Exception
      */
+    #[Route(path: '/overtime_by_user', name: 'overtime_bundle_report', methods: ['GET', 'POST'])]
     public function overtimeByUser(Request $request): Response
     {
-        if ($this->settingsTool->getConfiguration(ConfigEnum::APPROVAL_OVERTIME_NY) == false){
-          return $this->redirectToRoute('approval_bundle_report');
+        if ($this->settingsTool->getConfiguration(ConfigEnum::APPROVAL_OVERTIME_NY) == false) {
+            return $this->redirectToRoute('approval_bundle_report');
         }
 
         $users = $this->getUsers();
@@ -81,12 +69,12 @@ class OvertimeReportController extends AbstractController
         }
 
         $selectedUser = $values->getUser();
-        $weeklyEntries = $this->approvalRepository->findAllWeekForUser($selectedUser,null);
+        $weeklyEntries = $this->approvalRepository->findAllWeekForUser($selectedUser, null);
 
         return $this->render('@Approval/overtime_by_user.html.twig', [
             'current_tab' => 'overtime_by_user',
-            'form' => $form->createView(),
-            'user' => $selectedUser,    
+            'form' => $form,
+            'user' => $selectedUser,
             'weeklyEntries' => array_reverse($weeklyEntries),
             'showToApproveTab' => $this->canManageAllPerson() || $this->canManageTeam(),
             'showSettings' => $this->isGranted('ROLE_SUPER_ADMIN'),
@@ -125,9 +113,7 @@ class OvertimeReportController extends AbstractController
         if (!empty($users)) {
             usort(
                 $users,
-                function (User $userA, User $userB) {
-                    return strcmp(strtoupper($userA->getUsername()), strtoupper($userB->getUsername()));
-                }
+                fn (User $userA, User $userB) => strcmp(strtoupper($userA->getUsername()), strtoupper($userB->getUsername()))
             );
         }
 

@@ -10,67 +10,27 @@
 namespace KimaiPlugin\ApprovalBundle\API;
 
 use App\Repository\UserRepository;
-use Exception;
 use DateTime;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Exception;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
+use KimaiPlugin\ApprovalBundle\Enumeration\ConfigEnum;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
-use Nelmio\ApiDocBundle\Annotation\Security as ApiSecurity;
+use KimaiPlugin\ApprovalBundle\Toolbox\SettingsTool;
 use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Doctrine\Common\Collections\Criteria;
-use KimaiPlugin\ApprovalBundle\Enumeration\ConfigEnum;
-use KimaiPlugin\ApprovalBundle\Toolbox\SettingsTool;
 
 /**
  * @SWG\Tag(name="ApprovalBundleApi")
  */
 final class ApprovalOvertimeWeeklyController extends AbstractController
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var ViewHandlerInterface
-     */
-    private $viewHandler;
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $security;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
-     * @var SettingsTool
-     */
-    private $settingsTool;
-
-    public function __construct(
-        ViewHandlerInterface $viewHandler,
-        UserRepository $userRepository,
-        ApprovalRepository $approvalRepository,
-        AuthorizationCheckerInterface $security,
-        TranslatorInterface $translator,
-        SettingsTool $settingsTool
-    ) {
-        $this->viewHandler = $viewHandler;
-        $this->userRepository = $userRepository;
-        $this->approvalRepository = $approvalRepository;
-        $this->security = $security;
-        $this->translator = $translator;
-        $this->settingsTool = $settingsTool;
+    public function __construct(private readonly ViewHandlerInterface $viewHandler, private readonly UserRepository $userRepository, private readonly ApprovalRepository $approvalRepository, private readonly AuthorizationCheckerInterface $security, private readonly TranslatorInterface $translator, private readonly SettingsTool $settingsTool)
+    {
     }
 
     /**
@@ -78,7 +38,7 @@ final class ApprovalOvertimeWeeklyController extends AbstractController
      *     response=200,
      *     description="Get weekly overtime overview for all weeks from 'date' and later"
      * )
-     * 
+     *
      * @SWG\Parameter(
      *      name="user",
      *      in="query",
@@ -133,7 +93,7 @@ final class ApprovalOvertimeWeeklyController extends AbstractController
             $currentUser = $selectedUser;
         }
 
-        $weeklyEntries = $this->approvalRepository->findAllWeekForUser($currentUser,$seletedDate);
+        $weeklyEntries = $this->approvalRepository->findAllWeekForUser($currentUser, $seletedDate);
 
         if ($weeklyEntries) {
             return $this->viewHandler->handle(
@@ -143,6 +103,7 @@ final class ApprovalOvertimeWeeklyController extends AbstractController
                 )
             );
         }
+
         return $this->error404($this->translator->trans('api.noData'));
     }
 

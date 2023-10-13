@@ -26,62 +26,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * @Route(path="/approval")
- */
+#[Route(path: '/approval')]
 class ApprovalController extends AbstractController
 {
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var ApprovalHistoryRepository
-     */
-    private $approvalHistoryRepository;
-    /**
-     * @var ApprovalStatusRepository
-     */
-    private $approvalStatusRepository;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var EmailTool
-     */
-    private $emailTool;
-    /**
-     * @var LockdownRepository
-     */
-    private $lockdownRepository;
-
-    public function __construct(
-        ApprovalRepository $approvalRepository,
-        ApprovalHistoryRepository $approvalHistoryRepository,
-        ApprovalStatusRepository $approvalStatusRepository,
-        UrlGeneratorInterface $urlGenerator,
-        UserRepository $userRepository,
-        EmailTool $emailTool,
-        LockdownRepository $lockdownRepository
-    ) {
-        $this->approvalRepository = $approvalRepository;
-        $this->approvalHistoryRepository = $approvalHistoryRepository;
-        $this->approvalStatusRepository = $approvalStatusRepository;
-        $this->urlGenerator = $urlGenerator;
-        $this->userRepository = $userRepository;
-        $this->emailTool = $emailTool;
-        $this->lockdownRepository = $lockdownRepository;
+    public function __construct(private readonly ApprovalRepository $approvalRepository, private readonly ApprovalHistoryRepository $approvalHistoryRepository, private readonly ApprovalStatusRepository $approvalStatusRepository, private readonly UrlGeneratorInterface $urlGenerator, private readonly UserRepository $userRepository, private readonly EmailTool $emailTool, private readonly LockdownRepository $lockdownRepository)
+    {
     }
 
     /**
-     * @Route(path="/add_to_approve", name="add_to_approve", methods={"GET", "POST"})
      * @throws Exception
      */
+    #[Route(path: '/add_to_approve', name: 'add_to_approve', methods: ['GET', 'POST'])]
     public function addToApprove(Request $request): RedirectResponse
     {
         $userId = $request->query->get('user');
@@ -97,10 +52,10 @@ class ApprovalController extends AbstractController
     }
 
     /**
-     * @Route(path="/approve/{approveId}", defaults={"approveId": 0}, name="approve", methods={"GET"})
      * @throws Exception
      */
-    public function approveAction(Request $request, string $approveId): RedirectResponse
+    #[Route(path: '/approve/{approveId}', defaults: ['approveId' => 0], name: 'approve', methods: ['GET'])]
+    public function approve(Request $request, string $approveId): RedirectResponse
     {
         $approval = $this->approvalRepository->find($approveId);
         $approval = $this->approvalRepository->checkLastStatus(
@@ -130,10 +85,10 @@ class ApprovalController extends AbstractController
     }
 
     /**
-     * @Route(path="/not_approved/{approveId}", defaults={"approveId": 0}, name="not_approved", methods={"GET"})
      * @throws Exception
      */
-    public function notApprovedAction(Request $request, string $approveId): RedirectResponse
+    #[Route(path: '/not_approved/{approveId}', defaults: ['approveId' => 0], name: 'not_approved', methods: ['GET'])]
+    public function notApproved(Request $request, string $approveId): RedirectResponse
     {
         $approval = $this->approvalRepository->find($approveId);
         $approval = $this->approvalRepository->checkLastStatus(
@@ -159,10 +114,10 @@ class ApprovalController extends AbstractController
     }
 
     /**
-     * @Route(path="/denied/{approveId}", defaults={"approveId": 0}, name="denied", methods={"GET"})
      * @throws Exception
      */
-    public function deniedAction(Request $request, string $approveId): RedirectResponse
+    #[Route(path: '/denied/{approveId}', defaults: ['approveId' => 0], name: 'denied', methods: ['GET'])]
+    public function denied(Request $request, string $approveId): RedirectResponse
     {
         $approval = $this->approvalRepository->find($approveId);
         $approval = $this->approvalRepository->checkLastStatus(
@@ -255,9 +210,7 @@ class ApprovalController extends AbstractController
 
         if ($dateFirstMonthDay < $todayFirstMonthDay) {
             $users = $this->userRepository->findAll();
-            $users = array_filter($users, function ($user) {
-                return $user->isEnabled() && !$user->isSuperAdmin();
-            });
+            $users = array_filter($users, fn ($user) => $user->isEnabled() && !$user->isSuperAdmin());
             if ($this->approvalRepository->areAllUsersApproved($date, $users)) {
                 $this->emailTool->sendClosedWeekEmail((new DateTime($date))->format('F'));
             }

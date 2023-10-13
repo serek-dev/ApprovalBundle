@@ -21,24 +21,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuSubscriber implements EventSubscriberInterface
 {
-    private $userRepository;
-    private $approvalRepository;
-    private $security;
-    /**
-     * @var TokenStorageInterface
-     */
-    private $token;
-
-    public function __construct(
-        UserRepository $userRepository,
-        TokenStorageInterface $token,
-        ApprovalRepository $approvalRepository,
-        AuthorizationCheckerInterface $security
-    ) {
-        $this->security = $security;
-        $this->token = $token;
-        $this->approvalRepository = $approvalRepository;
-        $this->userRepository = $userRepository;
+    public function __construct(private readonly UserRepository $userRepository, private readonly TokenStorageInterface $token, private readonly ApprovalRepository $approvalRepository, private readonly AuthorizationCheckerInterface $security)
+    {
     }
 
     public static function getSubscribedEvents(): array

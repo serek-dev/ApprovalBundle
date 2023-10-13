@@ -19,15 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddToApprove extends AbstractType
 {
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-
-    public function __construct(
-        ApprovalRepository $approvalRepository
-    ) {
-        $this->approvalRepository = $approvalRepository;
+    public function __construct(private readonly ApprovalRepository $approvalRepository)
+    {
     }
 
     /**

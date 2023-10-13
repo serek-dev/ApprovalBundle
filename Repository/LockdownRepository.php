@@ -111,8 +111,6 @@ class LockdownRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param User $user
-     * @param ApprovalRepository $approvalRepository
      * @return void
      * @throws Exception
      * @phpstan-ignore-next-line

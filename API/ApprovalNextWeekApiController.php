@@ -11,11 +11,9 @@ namespace KimaiPlugin\ApprovalBundle\API;
 
 use App\Repository\UserRepository;
 use Exception;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
-use Nelmio\ApiDocBundle\Annotation\Security as ApiSecurity;
 use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,39 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class ApprovalNextWeekApiController extends AbstractController
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var ViewHandlerInterface
-     */
-    private $viewHandler;
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $security;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(
-        ViewHandlerInterface $viewHandler,
-        UserRepository $userRepository,
-        ApprovalRepository $approvalRepository,
-        AuthorizationCheckerInterface $security,
-        TranslatorInterface $translator
-    ) {
-        $this->viewHandler = $viewHandler;
-        $this->userRepository = $userRepository;
-        $this->approvalRepository = $approvalRepository;
-        $this->security = $security;
-        $this->translator = $translator;
+    public function __construct(private readonly ViewHandlerInterface $viewHandler, private readonly UserRepository $userRepository, private readonly ApprovalRepository $approvalRepository, private readonly AuthorizationCheckerInterface $security, private readonly TranslatorInterface $translator)
+    {
     }
 
     /**
@@ -68,7 +35,7 @@ final class ApprovalNextWeekApiController extends AbstractController
      *     response=200,
      *     description="Status of selected week"
      * )
-     * 
+     *
      * @SWG\Parameter(
      *      name="user",
      *      in="query",
@@ -82,7 +49,7 @@ final class ApprovalNextWeekApiController extends AbstractController
      * @ApiSecurity(name="apiToken")
      * @throws Exception
      */
-    public function nextWeekAction(Request $request): Response
+    public function nextWeek(Request $request): Response
     {
         $selectedUserId = $request->query->get('user', -1);
         $currentUser = $this->userRepository->find($this->getUser()->getId());

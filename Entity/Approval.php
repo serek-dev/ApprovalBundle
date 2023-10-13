@@ -13,47 +13,28 @@ use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
 
-/**
- * @ORM\Entity(repositoryClass=ApprovalRepository::class)
- * @ORM\Table(name="kimai2_ext_approval")
- */
+#[ORM\Table(name: 'kimai2_ext_approval')]
+#[ORM\Entity(repositoryClass: ApprovalRepository::class)]
 class Approval
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
-    /**
-     * @var User
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     */
-    private $user;
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE', nullable: false)]
+    private ?\App\Entity\User $user = null;
+    #[ORM\Column(type: 'date')]
     private $startDate;
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: 'date')]
     private $endDate;
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $expectedDuration;
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $actualDuration;
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $creationDate;
-    /**
-     * @ORM\OneToMany(targetEntity="KimaiPlugin\ApprovalBundle\Entity\ApprovalHistory", mappedBy="approval")
-     */
+    #[ORM\OneToMany(targetEntity: \KimaiPlugin\ApprovalBundle\Entity\ApprovalHistory::class, mappedBy: 'approval')]
     private $history;
 
     /**
@@ -64,10 +45,7 @@ class Approval
         return $this->id;
     }
 
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
+    public function setId(mixed $id): void
     {
         $this->id = $id;
     }
@@ -80,9 +58,6 @@ class Approval
         return $this->user;
     }
 
-    /**
-     * @param User $user
-     */
     public function setUser(User $user): void
     {
         $this->user = $user;
@@ -96,10 +71,7 @@ class Approval
         return $this->startDate;
     }
 
-    /**
-     * @param mixed $startDate
-     */
-    public function setStartDate($startDate): void
+    public function setStartDate(mixed $startDate): void
     {
         $this->startDate = $startDate;
     }
@@ -112,10 +84,7 @@ class Approval
         return $this->endDate;
     }
 
-    /**
-     * @param mixed $endDate
-     */
-    public function setEndDate($endDate): void
+    public function setEndDate(mixed $endDate): void
     {
         $this->endDate = $endDate;
     }
@@ -128,10 +97,7 @@ class Approval
         return $this->expectedDuration;
     }
 
-    /**
-     * @param mixed $expectedDuration
-     */
-    public function setExpectedDuration($expectedDuration): void
+    public function setExpectedDuration(mixed $expectedDuration): void
     {
         $this->expectedDuration = $expectedDuration;
     }
@@ -160,10 +126,7 @@ class Approval
         return $this->creationDate;
     }
 
-    /**
-     * @param mixed $creationDate
-     */
-    public function setCreationDate($creationDate): void
+    public function setCreationDate(mixed $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
@@ -178,10 +141,7 @@ class Approval
         return \gettype($history) === 'object' ? $history->toArray() : $history;
     }
 
-    /**
-     * @param mixed $history
-     */
-    public function setHistory($history): void
+    public function setHistory(mixed $history): void
     {
         $this->history = $history;
     }

@@ -1,71 +1,58 @@
 <?php
 
+/*
+ * This file is part of the Kimai time-tracking app.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace KimaiPlugin\ApprovalBundle\Entity;
 
-use App\Repository\ApprovalWorkdayHistoryRepository;
 use App\Entity\User;
+use App\Repository\ApprovalWorkdayHistoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ApprovalWorkdayHistoryRepository::class)
- * @ORM\Table(name="kimai2_ext_approval_workday_history")
- */
+#[ORM\Table(name: 'kimai2_ext_approval_workday_history')]
+#[ORM\Entity(repositoryClass: ApprovalWorkdayHistoryRepository::class)]
 class ApprovalWorkdayHistory
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     /**
      * @var User
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE', nullable: false)]
     private ?User $user = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $monday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $tuesday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $wednesday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $thursday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $friday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $saturday = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $sunday = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $validTill = null;
+    #[ORM\Column(type: 'date')]
+    private ?\DateTimeInterface $validTill = null;
 
     public function __construct()
     {

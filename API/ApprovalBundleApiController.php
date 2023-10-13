@@ -12,7 +12,6 @@ namespace KimaiPlugin\ApprovalBundle\API;
 use App\Repository\UserRepository;
 use DateTime;
 use Exception;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use KimaiPlugin\ApprovalBundle\Entity\Approval;
@@ -23,7 +22,6 @@ use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalStatusRepository;
 use KimaiPlugin\ApprovalBundle\Repository\LockdownRepository;
 use KimaiPlugin\ApprovalBundle\Toolbox\EmailTool;
-use Nelmio\ApiDocBundle\Annotation\Security as ApiSecurity;
 use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,69 +35,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class ApprovalBundleApiController extends AbstractController
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var EmailTool
-     */
-    private $emailTool;
-    /**
-     * @var ViewHandlerInterface
-     */
-    private $viewHandler;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-    /**
-     * @var ApprovalRepository
-     */
-    private $approvalRepository;
-    /**
-     * @var ApprovalHistoryRepository
-     */
-    private $approvalHistoryRepository;
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $security;
-    /**
-     * @var ApprovalStatusRepository
-     */
-    private $approvalStatusRepository;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
-     * @var LockdownRepository
-     */
-    private $lockdownRepository;
-
-    public function __construct(
-        ViewHandlerInterface $viewHandler,
-        UserRepository $userRepository,
-        EmailTool $emailTool,
-        UrlGeneratorInterface $urlGenerator,
-        ApprovalRepository $approvalRepository,
-        ApprovalHistoryRepository $approvalHistoryRepository,
-        ApprovalStatusRepository $approvalStatusRepository,
-        AuthorizationCheckerInterface $security,
-        TranslatorInterface $translator,
-        LockdownRepository $lockdownRepository
-    ) {
-        $this->viewHandler = $viewHandler;
-        $this->userRepository = $userRepository;
-        $this->emailTool = $emailTool;
-        $this->urlGenerator = $urlGenerator;
-        $this->approvalRepository = $approvalRepository;
-        $this->approvalHistoryRepository = $approvalHistoryRepository;
-        $this->security = $security;
-        $this->approvalStatusRepository = $approvalStatusRepository;
-        $this->translator = $translator;
-        $this->lockdownRepository = $lockdownRepository;
+    public function __construct(private readonly ViewHandlerInterface $viewHandler, private readonly UserRepository $userRepository, private readonly EmailTool $emailTool, private readonly UrlGeneratorInterface $urlGenerator, private readonly ApprovalRepository $approvalRepository, private readonly ApprovalHistoryRepository $approvalHistoryRepository, private readonly ApprovalStatusRepository $approvalStatusRepository, private readonly AuthorizationCheckerInterface $security, private readonly TranslatorInterface $translator, private readonly LockdownRepository $lockdownRepository)
+    {
     }
 
     /**
@@ -107,7 +44,7 @@ final class ApprovalBundleApiController extends AbstractController
      *     response=200,
      *     description="URL to submitted week"
      * )
-     * 
+     *
      * @SWG\Parameter(
      *      name="user",
      *      in="query",
@@ -128,7 +65,7 @@ final class ApprovalBundleApiController extends AbstractController
      * @ApiSecurity(name="apiToken")
      * @throws Exception
      */
-    public function submitWeekAction(Request $request): Response
+    public function submitWeek(Request $request): Response
     {
         $selectedUserId = $request->query->get('user', -1);
         $selectedDate = $this->getSelectedDate($request);
