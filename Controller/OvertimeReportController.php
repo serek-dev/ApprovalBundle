@@ -42,7 +42,6 @@ class OvertimeReportController extends AbstractController
     }
 
     /**
-     * @Security("is_granted('view_team_approval') or is_granted('view_all_approval') ")
      * @throws Exception
      */
     #[Route(path: '/overtime_by_user', name: 'overtime_bundle_report', methods: ['GET', 'POST'])]
