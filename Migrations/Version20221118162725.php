@@ -30,11 +30,11 @@ final class Version20221118162725 extends AbstractMigration
         $this->addSql('ALTER TABLE kimai2_ext_approval_workday_history ADD CONSTRAINT FK_785CWEC0A76ED395 FOREIGN KEY (user_id) REFERENCES kimai2_users (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE kimai2_ext_approval ADD actual_duration INT');
         $this->addSql('
-          UPDATE kimai2_ext_approval as app
+          UPDATE kimai2_ext_approval AS app
             INNER JOIN (
-              SELECT ap.user_id, ap.start_date, ap.end_date, SUM(t.duration) AS dur_sum
-                FROM kimai2_ext_approval as ap, kimai2_timesheet AS t
-                WHERE ap.user_id = t.user AND t.start_time >= ap.start_date AND t.end_time <= ap.end_date
+                SELECT ap.user_id, ap.start_date, SUM(t.duration) AS dur_sum
+                FROM kimai2_ext_approval AS ap
+                JOIN kimai2_timesheet AS t ON ap.user_id = t.user AND t.start_time >= ap.start_date AND t.end_time <= ap.end_date
                 GROUP BY ap.user_id, ap.start_date
             ) AS tm ON app.user_id = tm.user_id AND app.start_date = tm.start_date
             SET app.actual_duration = tm.dur_sum');
