@@ -171,7 +171,6 @@ class WeekReportController extends AbstractController
     }
 
     /**
-     * @Security("is_granted('view_team_approval') or is_granted('view_all_approval') ")
      * @throws Exception
      */
     #[Route(path: '/to_approve', name: 'approval_bundle_to_approve', methods: ['GET', 'POST'])]
