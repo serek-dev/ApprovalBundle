@@ -25,7 +25,7 @@ class WeekByUserForm extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return null;
+        return '';
     }
 
     /**
