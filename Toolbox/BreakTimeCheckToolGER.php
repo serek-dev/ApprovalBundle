@@ -13,6 +13,11 @@ use App\Entity\Timesheet;
 use Exception;
 use KimaiPlugin\ApprovalBundle\Enumeration\ConfigEnum;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Throwable;
+use function abs;
+use function array_reduce;
+use function error_log;
+use function usort;
 
 class BreakTimeCheckToolGER
 {
@@ -174,34 +179,38 @@ class BreakTimeCheckToolGER
 
     private function checkElevenHoursBreak($timesheets, array &$errors)
     {
-        $reduce = array_reduce(
-            $timesheets,
-            function ($result, Timesheet $timesheet) {
-                if (\array_key_exists($timesheet->getUser()->getId(), $result)) {
-                    $result[$timesheet->getUser()->getId()][] = $timesheet;
-                } else {
-                    $result[$timesheet->getUser()->getId()] = [];
-                }
-
-                return $result;
-            },
-            []
-        );
-        foreach ($reduce as $value) {
-            usort($value, fn ($a, $b) => $a->getBegin()->getTimestamp() - $b->getBegin()->getTimestamp());
-
-            for ($i = 0; $i < \count($value) - 1; $i++) {
-                if ($value[$i]->getEnd() != null) {
-                    $timesheetOne = $value[$i]->getEnd()->getTimestamp();
-                    $timesheetTwo = $value[$i + 1]->getBegin()->getTimestamp();
-                    if ($value[$i]->getEnd() == null) {
-                        $errors[$value[$i + 1]->getBegin()->format('Y-m-d')][] = $this->translator->trans('error.no_end_date');
+        try {
+            $reduce = array_reduce(
+                $timesheets,
+                function ($result, Timesheet $timesheet) {
+                    if (\array_key_exists($timesheet->getUser()->getId(), $result)) {
+                        $result[$timesheet->getUser()->getId()][] = $timesheet;
+                    } else {
+                        $result[$timesheet->getUser()->getId()] = [];
                     }
-                    if (abs($timesheetOne - $timesheetTwo) < 11 * 60 * 60 && $value[$i]->getEnd()->format('Y-m-d') < $value[$i + 1]->getEnd()->format('Y-m-d')) {    // 11h * 60 * 60 -> to seconds
-                        $errors[$value[$i + 1]->getBegin()->format('Y-m-d')][] = $this->translator->trans('error.less_than_eleven_hours_off');
+
+                    return $result;
+                },
+                []
+            );
+            foreach ($reduce as $value) {
+                usort($value, fn ($a, $b) => $a->getBegin()->getTimestamp() - $b->getBegin()->getTimestamp());
+
+                for ($i = 0; $i < \count($value) - 1; $i++) {
+                    if ($value[$i]->getEnd() != null) {
+                        $timesheetOne = $value[$i]->getEnd()->getTimestamp();
+                        $timesheetTwo = $value[$i + 1]->getBegin()->getTimestamp();
+                        if ($value[$i]->getEnd() == null) {
+                            $errors[$value[$i + 1]->getBegin()->format('Y-m-d')][] = $this->translator->trans('error.no_end_date');
+                        }
+                        if (abs($timesheetOne - $timesheetTwo) < 11 * 60 * 60 && $value[$i]->getEnd()->format('Y-m-d') < $value[$i + 1]->getEnd()->format('Y-m-d')) {    // 11h * 60 * 60 -> to seconds
+                            $errors[$value[$i + 1]->getBegin()->format('Y-m-d')][] = $this->translator->trans('error.less_than_eleven_hours_off');
+                        }
                     }
                 }
             }
+        }catch (Throwable $e) {
+            error_log($e->getMessage()); // todo:
         }
     }
 
